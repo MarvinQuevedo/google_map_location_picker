@@ -73,7 +73,7 @@ class MapPickerState extends State<MapPicker> {
 
   Position _currentPosition;
 
-  String _address;
+  SearchResult _address;
 
   void _onToggleMapTypePressed() {
     final MapType nextType =
@@ -211,7 +211,7 @@ class MapPickerState extends State<MapPicker> {
                 children: <Widget>[
                   Flexible(
                     flex: 20,
-                    child: FutureLoadingBuilder<String>(
+                    child: FutureLoadingBuilder<SearchResult>(
                         future: getAddress(locationProvider.lastIdleLocation),
                         mutable: true,
                         loadingIndicator: Row(
@@ -233,9 +233,9 @@ class MapPickerState extends State<MapPicker> {
                     onPressed: () {
                       Navigator.of(context).pop({
                         'location': LocationResult(
-                          latLng: locationProvider.lastIdleLocation,
-                          address: _address,
-                        )
+                            latLng: locationProvider.lastIdleLocation,
+                            address: _address.formattedAddress,
+                            others: _address.components)
                       });
                     },
                     child: widget.resultCardConfirmIcon ??
@@ -250,7 +250,7 @@ class MapPickerState extends State<MapPicker> {
     );
   }
 
-  Future<String> getAddress(LatLng location) async {
+  Future<SearchResult> getAddress(LatLng location) async {
     try {
       var endPoint =
           'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=${widget.apiKey}';
@@ -258,7 +258,8 @@ class MapPickerState extends State<MapPicker> {
               headers: await LocationUtils.getAppHeaders()))
           .body);
 
-      return response['results'][0]['formatted_address'];
+      return SearchResult(response['results'][0]['address_components'],
+          response['results'][0]['formatted_address']);
     } catch (e) {
       print(e);
     }
@@ -415,4 +416,10 @@ class _MapFabs extends StatelessWidget {
       ),
     );
   }
+}
+
+class SearchResult {
+  String formattedAddress;
+  List components;
+  SearchResult(this.components, this.formattedAddress);
 }

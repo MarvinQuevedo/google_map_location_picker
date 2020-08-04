@@ -10,7 +10,10 @@ class LocationResult {
   /// Latitude/Longitude of the selected location.
   LatLng latLng;
 
-  LocationResult({this.latLng, this.address});
+  /// Original response of Google Services
+  List components;
+
+  LocationResult({this.latLng, this.address, this.components});
 
   @override
   String toString() {
