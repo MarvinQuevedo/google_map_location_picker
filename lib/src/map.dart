@@ -16,6 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import 'model/location_result.dart';
+import 'model/search_result.dart';
 import 'utils/location_utils.dart';
 
 class MapPicker extends StatefulWidget {
@@ -235,7 +236,7 @@ class MapPickerState extends State<MapPicker> {
                         'location': LocationResult(
                             latLng: locationProvider.lastIdleLocation,
                             address: _address.formattedAddress,
-                            others: _address.components)
+                            components: _address.components)
                       });
                     },
                     child: widget.resultCardConfirmIcon ??
@@ -416,10 +417,4 @@ class _MapFabs extends StatelessWidget {
       ),
     );
   }
-}
-
-class SearchResult {
-  String formattedAddress;
-  List components;
-  SearchResult(this.components, this.formattedAddress);
 }
